@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f3f9fb" />
+    <title>Nourix | إدارة المطعم</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=20" />
+  </head>
+  <body>
+    <section class="auth-screen" id="login-screen">
+      <form class="auth-card" id="login-form">
+        <div class="auth-brand">
+          <img class="brand-logo-icon" src="/assets/nourix-mark.svg?v=2" alt="" />
+          <strong>Nourix</strong>
+        </div>
+        <h1>تسجيل الدخول إلى Nourix</h1>
+        <p>إدارة مطعمك بلمسة واحدة</p>
+        <label>اسم الدخول<select name="username" id="login-username" autocomplete="username" required><option value="">جارٍ تحميل المستخدمين...</option></select></label>
+        <label>كلمة المرور<input name="password" type="password" autocomplete="current-password" required maxlength="200" /></label>
+        <button type="submit" class="primary-button">دخول إلى النظام</button>
+        <div class="login-error hidden" id="login-error" role="alert"></div>
+      </form>
+    </section>
+
+    <section class="auth-screen hidden" id="setup-screen">
+      <form class="auth-card" id="setup-form">
+        <div class="auth-brand"><img class="brand-logo-icon" src="/assets/nourix-mark.svg?v=2" alt="" /><strong>Nourix</strong></div>
+        <h1>إعداد المطعم لأول مرة</h1>
+        <p>أدخل بيانات المطعم وأنشئ حساب المدير. تُحفظ البيانات محليًا على هذا الجهاز.</p>
+        <label>اسم المطعم<input name="restaurantName" required maxlength="100" autocomplete="organization" /></label>
+        <label>رقم الهاتف الأول<input name="phone1" type="tel" required maxlength="30" autocomplete="tel" /></label>
+        <label>رقم الهاتف الثاني <span class="optional">(اختياري)</span><input name="phone2" type="tel" maxlength="30" /></label>
+        <label>عنوان المطعم <span class="optional">(اختياري)</span><input name="address" maxlength="240" autocomplete="street-address" /></label>
+        <label>شعار المطعم <span class="optional">(اختياري، PNG أو JPG أو WebP حتى 3 ميجابايت)</span><input name="logo" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+        <div class="restaurant-logo-preview hidden" id="setup-logo-preview">
+          <img class="restaurant-logo-preview-image" alt="معاينة شعار المطعم" />
+          <span class="restaurant-logo-preview-empty">معاينة الشعار</span>
+        </div>
+        <label>اسم دخول المدير<input name="username" required minlength="3" maxlength="40" autocomplete="username" /></label>
+        <label>كلمة مرور المدير<input name="password" type="password" required minlength="4" maxlength="200" pattern="[0-9]{4,}" inputmode="numeric" autocomplete="new-password" /></label>
+        <button type="submit" class="primary-button">حفظ البيانات وبدء العمل</button>
+        <div class="login-error hidden" id="setup-error" role="alert"></div>
+      </form>
+    </section>
+
+    <div class="app-shell hidden" id="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <a class="brand" href="#" aria-label="Nourix - الصفحة الرئيسية">
+          <img class="brand-logo-icon" src="/assets/nourix-mark.svg?v=2" alt="" />
+          <span class="brand-copy"><strong id="brand-restaurant-name">Nourix</strong><small>نظام إدارة المطعم</small></span>
+        </a>
+        <div class="sidebar-label">القائمة الرئيسية</div>
+        <nav class="main-nav" aria-label="القائمة الرئيسية">
+          <button class="nav-item active" data-page="pos" aria-label="نقطة البيع" title="نقطة البيع"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4v6H7zm8 0h2m-2 3h2m-2 3h2M8 3v2m8-2v2"/></svg><span class="nav-label">نقطة البيع</span></button>
+          <button class="nav-item" data-page="orders" aria-label="الطلبات" title="الطلبات"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10a2 2 0 0 1 2 2v15H5V6a2 2 0 0 1 2-2Z"/><path d="M9 4V2h6v2m-6 6h6m-6 4h6m-6 4h3"/></svg><span class="nav-label">الطلبات</span><span class="nav-count" id="nav-order-count">0</span></button>
+          <button class="nav-item" data-page="order-report" aria-label="تقرير الطلبات" title="تقرير الطلبات"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="M14 3v5h5m-9 4 2-2 2 2 3-3m-7 6h7"/></svg><span class="nav-label">تقرير الطلبات</span></button>
+          <button class="nav-item" data-page="reports" aria-label="التقارير" title="التقارير"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h4v10m4 0V4h4v16m4 0v-7h4v7M2 20h21"/></svg><span class="nav-label">التقارير</span></button>
+          <button class="nav-item" data-page="expenses" aria-label="المصاريف" title="المصاريف"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18m-5 5h2m-12-9V3h12v2"/></svg><span class="nav-label">المصاريف</span></button>
+          <button class="nav-item" data-page="menu" aria-label="المنيو" title="المنيو"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H4zm16 0h-4a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h4zM7 8h3m-3 3h3m7-3h1m-1 3h1"/></svg><span class="nav-label">المنيو</span></button>
+          <button class="nav-item" data-page="customers" aria-label="العملاء" title="العملاء"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2zm13-9a3 3 0 1 0-1-5.8m2 8a5 5 0 0 1 4 4.8V20h-3"/></svg><span class="nav-label">العملاء</span></button>
+          <button class="nav-item admin-only hidden" data-page="users" aria-label="المستخدمون" title="المستخدمون"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2zm12-11 2 2 4-4m-5 9h5m-5 3h5"/></svg><span class="nav-label">المستخدمون</span></button>
+          <button class="nav-item admin-only hidden" data-page="drivers" aria-label="الدليفري" title="الدليفري"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3zm11 4h4l3 3v3h-7z"/><circle cx="7" cy="19" r="2"/><circle cx="18" cy="19" r="2"/><path d="M7 11h4m-4 3h2"/></svg><span class="nav-label">الدليفري</span></button>
+          <button class="nav-item admin-only hidden" data-page="shifts" aria-label="الوردية" title="الوردية"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2m-11-2h2m14 0h2"/></svg><span class="nav-label">الوردية</span></button>
+          <button class="nav-item admin-only hidden" data-page="settings" aria-label="الإعدادات" title="الإعدادات"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1-.1 1.8Z"/></svg><span class="nav-label">الإعدادات</span></button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="help-card">
+            <span class="help-icon">✦</span>
+            <strong>محتاج مساعدة؟</strong>
+            <p>فريقنا معاك في أي وقت.</p>
+            <button id="help-btn">تواصل معنا <span>←</span></button>
+          </div>
+          <div class="user-profile">
+            <div class="avatar" id="profile-avatar">م</div>
+            <div class="user-copy"><strong id="profile-username">—</strong><small id="profile-role">—</small></div>
+            <button class="more-btn" id="logout-profile" aria-label="تسجيل الخروج">⇥</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main-area">
+        <header class="topbar">
+          <div class="topbar-start">
+            <button class="mobile-menu" id="mobile-menu" aria-label="فتح القائمة">☰</button>
+            <div>
+              <div class="breadcrumb">الرئيسية <span>/</span> <strong id="breadcrumb-current">نقطة البيع</strong></div>
+              <h1 id="page-title">نقطة البيع</h1>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <button class="primary-button admin-only hidden" id="finish-shift-btn" type="button">انهاء الورديه</button>
+            <div class="today-chip"><span class="live-dot"></span><span id="current-date"></span></div>
+            <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="تفعيل الوضع الداكن" title="تفعيل الوضع الداكن">☾</button>
+            <button class="icon-button logout-button" id="logout-btn" aria-label="تسجيل الخروج" title="تسجيل الخروج">⇥</button>
+          </div>
+        </header>
+
+        <section class="page active" id="page-pos">
+          <div class="pos-layout">
+            <div class="menu-panel">
+              <div class="section-heading">
+                <div><h2>قائمة الطعام</h2><p>اختار الأصناف لإضافتها للطلب</p></div>
+                <label class="search-box"><span>⌕</span><input id="product-search" type="search" placeholder="ابحث عن صنف..." /></label>
+              </div>
+              <div class="category-list" id="categories"></div>
+              <div class="product-grid" id="product-grid"></div>
+            </div>
+
+            <aside class="cart-panel">
+              <div class="cart-head">
+                <div><h2>الطلب الحالي</h2><p><span id="cart-count">0</span> أصناف</p></div>
+                <button class="text-button" id="clear-cart">مسح الكل</button>
+              </div>
+              <div class="pos-order-tabs" id="pos-order-tabs" role="tablist" aria-label="طلبات نقطة البيع"></div>
+              <div class="order-types" aria-label="نوع الطلب">
+                <button class="order-type active" data-type="takeaway"><span>♨</span>تيك أوي</button>
+                <button class="order-type" data-type="delivery"><span>⌁</span>دليفري</button>
+                <button class="order-type" data-type="reservation"><span>◷</span>حجز</button>
+              </div>
+              <div class="customer-fields" id="customer-fields"></div>
+              <div class="order-extra-fields">
+                <label>طريقة الدفع<select id="payment-method" aria-label="طريقة الدفع"><option value="cash">نقدي</option><option value="cash_wallet">محفظة كاش</option><option value="visa">فيزا</option></select></label>
+                <label>ملاحظات الطلب <span class="optional">(اختياري)</span><textarea id="order-note" maxlength="500" rows="2" placeholder="ملاحظات أو تعليمات خاصة بالطلب..."></textarea></label>
+              </div>
+              <div class="cart-items" id="cart-items">
+                <div class="empty-cart"><div class="empty-icon">＋</div><strong>الطلب لسه فاضي</strong><span>اختار أصناف من القائمة وابدأ طلب جديد</span></div>
+              </div>
+              <div class="cart-summary">
+                <div class="summary-row"><span>الإجمالي الفرعي</span><strong id="subtotal">٠ ج.م</strong></div>
+                <div class="summary-row delivery-row hidden"><span>رسوم التوصيل</span><strong id="delivery-fee">٠ ج.م</strong></div>
+                <div class="summary-total"><span>الإجمالي</span><strong id="total">٠ ج.م</strong></div>
+                <button class="checkout-button checkout-print-button" id="checkout-print-btn" disabled>تأكيد الطلب وطباعة</button>
+                <div class="secure-note">✓ <span>سيتم تسجيل طريقة الدفع المختارة مع الطلب</span></div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="page" id="page-orders">
+          <div class="page-toolbar">
+            <div><h2>كل الطلبات</h2><p>تابع حالة الطلبات وإدارتها بسهولة</p></div>
+            <div class="toolbar-controls">
+              <label class="search-box"><span>⌕</span><input id="order-search" type="search" inputmode="search" placeholder="ابحث برقم الطلب أو رقم الهاتف..." /></label>
+              <select id="order-filter" class="select-control" aria-label="تصفية حسب الحالة"><option value="all">كل الحالات</option><option value="قيد التحضير">قيد التحضير</option><option value="في الطريق">في الطريق</option><option value="مكتمل">مكتمل</option><option value="ملغي">ملغي</option></select>
+            </div>
+          </div>
+          <div class="stats-row compact-stats" id="order-stats"></div>
+          <div class="table-card">
+            <div class="table-wrap"><table><thead><tr><th>رقم الطلب</th><th>العميل</th><th>النوع</th><th>التاريخ</th><th>الحالة</th><th>السائق</th><th>بواسطة</th><th>التفاصيل</th><th>الإجراءات</th></tr></thead><tbody id="orders-table"></tbody></table></div>
+            <div class="table-empty hidden" id="orders-empty">لا توجد طلبات مطابقة للبحث.</div>
+          </div>
+        </section>
+
+        <section class="page" id="page-order-report">
+          <div class="page-toolbar order-report-toolbar">
+            <div><h2>تقرير الطلبات</h2><p>طلبات الشهر الحالي؛ الطلبات من الشهور السابقة تختفي من هذا التقرير فقط وتظل محفوظة في النظام.</p></div>
+            <div class="order-report-filters">
+              <label class="search-box"><span>⌕</span><input id="order-report-search" type="search" inputmode="search" placeholder="ابحث برقم الطلب أو رقم الهاتف..." /></label>
+              <select id="order-report-type" class="select-control" aria-label="تصفية حسب نوع الطلب">
+                <option value="all">كل أنواع الطلب</option><option value="takeaway">تيك أوي</option><option value="delivery">دليفري</option><option value="reservation">حجز</option>
+              </select>
+              <select id="order-report-payment" class="select-control" aria-label="تصفية حسب طريقة الدفع">
+                <option value="all">كل طرق الدفع</option><option value="cash">نقدي</option><option value="cash_wallet">محفظة كاش</option><option value="visa">فيزا</option>
+              </select>
+              <select id="order-report-status" class="select-control" aria-label="تصفية حسب الحالة">
+                <option value="all">كل الحالات</option><option value="قيد التحضير">قيد التحضير</option><option value="في الطريق">في الطريق</option><option value="مكتمل">مكتمل</option><option value="ملغي">ملغي</option>
+              </select>
+              <label class="order-report-date">من التاريخ والوقت<input id="order-report-from" type="datetime-local" step="60" aria-label="وقت بداية فترة التقرير" /></label>
+              <label class="order-report-date">إلى التاريخ والوقت<input id="order-report-to" type="datetime-local" step="60" aria-label="وقت نهاية فترة التقرير" /></label>
+              <div class="order-report-date-actions">
+                <button class="primary-button order-report-apply" id="order-report-apply" type="button">تطبيق الفلاتر</button>
+                <button class="secondary-button order-report-clear" id="order-report-clear" type="button">مسح الفلاتر</button>
+              </div>
+            </div>
+          </div>
+          <div class="stats-row compact-stats" id="order-report-stats"></div>
+          <div class="table-card">
+            <div class="table-wrap"><table><thead><tr><th>رقم الطلب</th><th>العميل</th><th>النوع</th><th>التاريخ</th><th>الحالة</th><th>السائق</th><th>بواسطة</th><th>التفاصيل</th></tr></thead><tbody id="order-report-table"></tbody></table></div>
+            <div class="table-empty hidden" id="order-report-empty">لا توجد طلبات مطابقة للفلاتر خلال الشهر.</div>
+          </div>
+        </section>
+
+        <section class="page" id="page-reports">
+          <div class="page-toolbar">
+            <div><h2>التقارير</h2><p>نظرة سريعة على أداء مطعمك</p></div>
+            <label class="date-filter">الفترة
+              <select id="report-period" class="select-control"><option value="today">اليوم</option><option value="week">آخر ٧ أيام</option><option value="month">آخر ٣٠ يوم</option><option value="all">كل الفترات</option></select>
+            </label>
+          </div>
+          <div class="stats-row" id="report-stats"></div>
+          <div class="report-grid">
+            <div class="chart-card">
+              <div class="card-heading"><div><h3>ملخص المبيعات</h3><p>مبيعات آخر ٧ أيام</p></div><span class="trend-pill">● مباشر</span></div>
+              <div class="chart" id="sales-chart"></div>
+            </div>
+            <div class="breakdown-card">
+              <div class="card-heading"><div><h3>الطلبات حسب النوع</h3><p>توزيع الطلبات المكتملة</p></div></div>
+              <div class="type-breakdown" id="type-breakdown"></div>
+              <div class="report-total"><span>إجمالي الطلبات</span><strong id="report-order-total">٠</strong></div>
+            </div>
+          </div>
+          <div class="table-card top-products-card">
+            <div class="table-title">
+              <div><h3>الأصناف الأكثر مبيعًا</h3><p>أكثر ١٠ أصناف مبيعًا خلال الفترة المحددة</p></div>
+              <label class="date-filter">الفئة
+                <select id="top-products-category" class="select-control" aria-label="تصفية الأصناف الأكثر مبيعًا حسب الفئة"><option value="all">كل الفئات</option></select>
+              </label>
+            </div>
+            <div class="top-products-chart" id="top-products-chart" aria-live="polite"></div>
+            <div class="table-empty hidden" id="top-products-empty">لا توجد أصناف مباعة في الفترة المحددة.</div>
+          </div>
+        </section>
+
+        <section class="page" id="page-expenses">
+          <div class="page-toolbar">
+            <div><h2>المصاريف</h2><p>سجّل مصاريف المطعم وتابعها</p></div>
+            <div class="delivery-toolbar-actions">
+              <button class="secondary-button" id="archived-expenses-open" type="button">المصاريف القديمة</button>
+              <button class="primary-button" id="add-expense-open"><span>＋</span> إضافة مصروف</button>
+            </div>
+          </div>
+          <div class="stats-row" id="expense-stats"></div>
+          <div class="table-card">
+            <div class="table-title"><div><h3>مصاريف الوردية الحالية</h3><p>تنتقل مصروفات الوردية إلى سجل المصاريف القديمة بعد إقفالها</p></div><label class="search-box"><span>⌕</span><input id="expense-search" type="search" placeholder="ابحث عن مصروف..." /></label></div>
+            <div class="table-wrap"><table><thead><tr><th>المصروف</th><th>التصنيف</th><th>التاريخ</th><th>طريقة الدفع</th><th>المبلغ</th><th>بواسطة</th><th></th></tr></thead><tbody id="expenses-table"></tbody></table></div>
+            <div class="table-empty hidden" id="expenses-empty">لا توجد مصاريف مسجلة في الوردية الحالية.</div>
+          </div>
+        </section>
+
+        <section class="page" id="page-menu">
+          <div class="page-toolbar">
+            <div><h2>المنيو</h2><p>أضف أصناف المنيو وعدّل بياناتها وصورها وأسعارها</p></div>
+            <div class="menu-toolbar-actions">
+              <button class="secondary-button admin-only hidden" id="manage-product-categories" type="button">إدارة الفئات</button>
+              <button class="primary-button admin-only hidden" id="add-product-open" type="button"><span>＋</span> إضافة صنف</button>
+            </div>
+          </div>
+          <div class="stats-row" id="menu-stats"></div>
+          <div class="table-card">
+            <div class="table-title"><div><h3>أصناف المنيو</h3><p>إدارة الأصناف وأسعار الأحجام وحالة ظهورها في نقطة البيع</p></div><label class="search-box"><span>⌕</span><input id="menu-search" type="search" placeholder="ابحث عن صنف..." /></label></div>
+            <div class="table-wrap"><table><thead><tr><th>الصورة</th><th>الصنف</th><th>التصنيف</th><th>الأسعار</th><th>الحالة</th><th></th></tr></thead><tbody id="menu-table"></tbody></table></div>
+            <div class="table-empty hidden" id="menu-empty">لا توجد أصناف مطابقة.</div>
+          </div>
+        </section>
+
+        <section class="page" id="page-customers">
+          <div class="page-toolbar"><div><h2>العملاء</h2><p>ابحث برقم الهاتف لعرض بيانات العميل وطلباته السابقة</p></div></div>
+          <form class="customer-search-form" id="customer-search-form"><label class="search-box"><span>⌕</span><input id="customer-search" type="search" inputmode="tel" placeholder="اكتب رقم الهاتف..." required /></label><button class="primary-button" type="submit">بحث</button></form>
+          <div id="customer-results"><div class="customer-placeholder">ابحث برقم هاتف العميل لعرض ملفه وسجل الطلبات.</div></div>
+        </section>
+
+        <section class="page" id="page-shifts">
+          <div class="page-toolbar">
+            <div><h2>الوردية</h2><p>ملخص مبيعات وقيود كل وردية مع سجل الورديات</p></div>
+          </div>
+          <div class="stats-row compact-stats" id="shift-summary-stats"></div>
+          <div class="table-card">
+            <div class="table-wrap"><table><thead><tr><th>بداية الوردية</th><th>نهاية الوردية</th><th>إجمالي المبيعات</th><th>النقدي</th><th>محفظة كاش</th><th>الفيزا</th><th>المصاريف</th><th>الطلبات الملغاة</th><th>عهدة الدرج</th><th>صافي الوردية</th><th>بواسطة</th><th>الطباعة</th></tr></thead><tbody id="shifts-table"></tbody></table></div>
+            <div class="table-empty hidden" id="shifts-empty">لا توجد ورديات مسجلة.</div>
+          </div>
+        </section>
+
+        <section class="page" id="page-settings">
+          <div class="page-toolbar"><div><h2>إعدادات المطعم</h2><p>بيانات تظهر على فواتيرك وإعدادات مقاس الطباعة</p></div></div>
+          <form class="settings-form" id="settings-form">
+            <section class="table-card settings-section">
+              <div class="table-title"><div><h3>بيانات المطعم</h3><p>تظهر هذه البيانات في الفاتورة المطبوعة</p></div></div>
+              <div class="settings-fields">
+                <label>اسم المطعم<input name="restaurantName" required maxlength="100" /></label>
+                <label>رقم الهاتف الأول<input name="phone1" type="tel" maxlength="30" /></label>
+                <label>رقم الهاتف الثاني<input name="phone2" type="tel" maxlength="30" /></label>
+                <label>عنوان المطعم<input name="address" maxlength="240" autocomplete="street-address" /></label>
+                <label class="settings-logo-field">شعار المطعم <span class="optional">(اختياري، PNG أو JPG أو WebP حتى 3 ميجابايت)</span><input name="logo" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+                <div class="restaurant-logo-preview hidden" id="settings-logo-preview">
+                  <img class="restaurant-logo-preview-image" alt="معاينة شعار المطعم" />
+                  <span class="restaurant-logo-preview-empty">لا يوجد شعار مضاف</span>
+                </div>
+                <label class="settings-logo-remove"><input name="removeLogo" type="checkbox" /> حذف الشعار الحالي</label>
+              </div>
+            </section>
+            <section class="table-card settings-section">
+              <div class="table-title"><div><h3>إعدادات الطابعة</h3><p>تُرسل الطباعة مباشرة إلى طابعة الكاشير والطابعة الثانية عند تفعيلها</p></div></div>
+              <div class="settings-fields">
+                <label>عرض ورق الإيصال<select name="paperWidthMm"><option value="58">58 مم</option><option value="80">80 مم</option></select></label>
+                <label>طابعة الكاشير<select name="cashierPrinter"><option value="">اختر طابعة الكاشير</option></select></label>
+                <label class="printer-refresh-field">تحديث القائمة<button class="secondary-button" id="refresh-printers" type="button">تحديث الطابعات المثبتة</button></label>
+                <p class="printer-status" id="printer-status" role="status">يتم إرسال الإيصال مباشرة إلى الطابعة المحددة في Windows.</p>
+                <label class="second-printer-toggle"><input name="secondPrinterEnabled" type="checkbox" /> تفعيل طباعة نسخة ثانية</label>
+                <label>الطابعة الثانية<select name="secondPrinter" disabled><option value="">اختر الطابعة الثانية</option></select></label>
+              </div>
+            </section>
+            <button type="submit" class="primary-button">حفظ الإعدادات</button>
+          </form>
+          <section class="table-card settings-section backup-section">
+            <div class="table-title"><div><h3>النسخ الاحتياطي</h3><p>يحفظ البرنامج نسخة تلقائية يوميًا على هذا الجهاز ويحتفظ بآخر 14 نسخة.</p></div><button class="primary-button" id="create-backup" type="button">إنشاء نسخة الآن</button></div>
+            <div class="backup-controls">
+              <label>استعادة نسخة من ملف<input id="restore-backup-file" type="file" accept=".nourix,application/octet-stream" /></label>
+              <p id="backup-status" class="printer-status" role="status">استعادة نسخة تتطلب إعادة تشغيل البرنامج لإتمامها. تُنشأ نسخة أمان قبل الاستعادة.</p>
+            </div>
+            <div class="backup-list" id="backup-list"></div>
+            <div class="table-empty hidden" id="backups-empty">لا توجد نسخ احتياطية بعد.</div>
+          </section>
+        </section>
+
+        <section class="page" id="page-users">
+          <div class="page-toolbar">
+            <div><h2>المستخدمون</h2><p>إدارة حسابات الدخول وتحديد صلاحية كل مستخدم</p></div>
+            <button class="primary-button" id="add-user-open"><span>＋</span> إضافة حساب</button>
+          </div>
+          <div class="table-card"><div class="table-wrap"><table><thead><tr><th>اسم الدخول</th><th>الصلاحية</th><th>الصفحات المسموح بها</th><th>الحالة</th><th>تاريخ الإضافة</th><th>الإجراءات</th></tr></thead><tbody id="users-table"></tbody></table></div></div>
+        </section>
+
+        <section class="page" id="page-drivers">
+          <div class="page-toolbar">
+            <div><h2>الدليفري</h2><p>متابعة مستحقات المطعم والسائقين وتفاصيل طلبات التوصيل</p></div>
+            <div class="delivery-toolbar-actions">
+              <label class="delivery-driver-select-label">السائق
+                <select id="delivery-driver-select" class="select-control"><option value="">اختر سائقًا</option></select>
+              </label>
+              <button class="secondary-button" id="edit-driver-open" type="button" disabled>تعديل السائق</button>
+              <button class="primary-button" id="add-driver-open"><span>＋</span> إضافة سائق</button>
+            </div>
+          </div>
+          <div class="delivery-workspace hidden" id="delivery-workspace">
+            <aside class="delivery-side-nav" aria-label="قائمة السائق">
+              <div class="delivery-selected-driver"><span class="driver-assignment-avatar" id="delivery-driver-avatar">د</span><strong id="delivery-driver-name">—</strong><small id="delivery-driver-phone">—</small></div>
+              <button class="delivery-view-button active" type="button" data-delivery-view="settlements"><span>▤</span> التسليمات</button>
+              <button class="delivery-view-button" type="button" data-delivery-view="orders"><span>▧</span> تفاصيل الطلبات</button>
+            </aside>
+            <div class="delivery-content">
+              <section class="delivery-view active" id="delivery-settlements-view">
+                <form class="delivery-collection-form" id="delivery-collection-form">
+                  <div><strong>مبلغ التحصيل</strong><p>أدخل المبلغ المستلم من السائق وسيُخصم من مستحق المطعم</p></div>
+                  <label class="delivery-collection-input"><span>ج.م</span><input name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00" /></label>
+                  <button class="primary-button" type="submit">حفظ التحصيل</button>
+                </form>
+                <div class="stats-row delivery-stats" id="delivery-stats"></div>
+                <div class="table-card">
+                  <div class="table-title"><div><h3>سجل التحصيلات</h3><p>المبالغ المسجلة على السائق</p></div></div>
+                  <div class="table-wrap"><table><thead><tr><th>المبلغ</th><th>التاريخ</th><th>سُجل بواسطة</th></tr></thead><tbody id="delivery-collections-table"></tbody></table></div>
+                  <div class="table-empty hidden" id="delivery-collections-empty">لا توجد تحصيلات مسجلة لهذا السائق.</div>
+                </div>
+              </section>
+              <section class="delivery-view hidden" id="delivery-orders-view">
+                <div class="table-card">
+                  <div class="table-title"><div><h3>تفاصيل الطلبات المسندة</h3><p>كل الطلبات المسجلة على هذا السائق</p></div><label class="search-box"><span>⌕</span><input id="delivery-order-search" type="search" placeholder="ابحث برقم الطلب أو رقم الهاتف..." /></label></div>
+                  <div class="table-wrap"><table><thead><tr><th>رقم الطلب</th><th>العميل</th><th>النوع</th><th>التاريخ</th><th>الحالة</th><th>الإجمالي</th><th>بواسطة</th><th>التفاصيل</th></tr></thead><tbody id="delivery-orders-table"></tbody></table></div>
+                  <div class="table-empty hidden" id="delivery-orders-empty">لا توجد طلبات مسندة لهذا السائق.</div>
+                </div>
+              </section>
+            </div>
+          </div>
+          <div class="customer-placeholder" id="delivery-driver-placeholder">اختر سائقًا من القائمة لعرض التسليمات وتفاصيل الطلبات.</div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop hidden cash-float-backdrop" id="cash-float-modal">
+      <form class="modal cash-float-modal" id="cash-float-form">
+        <div class="modal-head"><div><h2>عهدة درج الكاشير</h2><p>أدخل المبلغ الموجود في الدرج عند بداية الوردية</p></div></div>
+        <div class="cash-float-summary" id="cash-float-hint"></div>
+        <label>عهدة الدرج بالجنيه<input name="amount" type="number" min="0" max="10000000" step="0.01" required inputmode="decimal" placeholder="0.00" /></label>
+        <div class="login-error hidden" id="cash-float-error" role="alert"></div>
+        <div class="modal-actions"><button type="submit" class="primary-button">حفظ العهدة وبدء العمل</button></div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="expense-modal">
+      <form class="modal" id="expense-form">
+        <div class="modal-head"><div><h2>إضافة مصروف جديد</h2><p>أدخل تفاصيل المصروف لتسجيله</p></div><button type="button" class="modal-close" id="expense-close" aria-label="إغلاق">×</button></div>
+        <label>الوصف<input name="name" required maxlength="100" placeholder="اكتب وصف المصروف" /></label>
+        <label>المبلغ (ج.م)<input name="amount" type="number" min="0.01" step="0.01" required placeholder="0.00" /></label>
+        <label>ملاحظات <span class="optional">(اختياري)</span><textarea name="note" rows="2" maxlength="180" placeholder="اكتب أي تفاصيل إضافية..."></textarea></label>
+        <div class="modal-actions"><button type="button" class="secondary-button" id="expense-cancel">إلغاء</button><button type="submit" class="primary-button">حفظ المصروف</button></div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="archived-expenses-modal">
+      <section class="modal archived-expenses-modal" aria-labelledby="archived-expenses-title">
+        <div class="modal-head">
+          <div><h2 id="archived-expenses-title">المصاريف القديمة</h2><p>كل المصاريف المسجلة في الورديات السابقة</p></div>
+          <button type="button" class="modal-close" data-close="archived-expenses-modal" aria-label="إغلاق">×</button>
+        </div>
+        <div class="table-title">
+          <label class="search-box"><span>⌕</span><input id="archived-expense-search" type="search" placeholder="ابحث باسم المصروف..." /></label>
+        </div>
+        <div class="table-wrap">
+          <table><thead><tr><th>الوصف</th><th>التاريخ والوقت</th><th>المبلغ</th><th>بواسطة</th></tr></thead><tbody id="archived-expenses-table"></tbody></table>
+        </div>
+        <div class="table-empty hidden" id="archived-expenses-empty">لا توجد مصاريف قديمة مطابقة للبحث.</div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="cancel-order-modal">
+      <form class="modal" id="cancel-order-form">
+        <div class="modal-head"><div><h2>إلغاء الطلب</h2><p id="cancel-order-number"></p></div><button type="button" class="modal-close" id="cancel-order-close" aria-label="إغلاق">×</button></div>
+        <input type="hidden" name="orderNumber" />
+        <label>سبب الإلغاء<textarea name="reason" required maxlength="240" rows="3" placeholder="اكتب سبب إلغاء الطلب"></textarea></label>
+        <div class="modal-actions"><button type="button" class="secondary-button" id="cancel-order-dismiss">إلغاء</button><button type="submit" class="primary-button">تأكيد الإلغاء</button></div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="product-modal">
+      <form class="modal" id="product-form">
+        <div class="modal-head"><div><h2 id="product-modal-title">إضافة صنف للمنيو</h2><p>أدخل بيانات الصنف وصورة المنيو والأسعار</p></div><button type="button" class="modal-close" data-close="product-modal" aria-label="إغلاق">×</button></div>
+        <input type="hidden" name="id" />
+        <label>اسم الصنف<input name="name" required maxlength="100" /></label>
+        <label>الفئة<select name="category" required><option value="">اختر فئة</option></select></label>
+        <div class="form-grid">
+          <label>سعر صغير (ج.م)<input name="priceSmall" type="number" min="0" step="0.01" required /></label>
+          <label>سعر وسط (ج.م)<input name="priceMedium" type="number" min="0" step="0.01" required /></label>
+        </div>
+        <label>سعر كبير (ج.م)<input name="priceLarge" type="number" min="0" step="0.01" required /></label>
+        <label>صورة الصنف<input name="image" type="file" accept="image/png,image/jpeg,image/webp" /><span class="optional">PNG أو JPG أو WebP، بحد أقصى 3 ميجابايت</span></label>
+        <div class="product-image-preview hidden" id="product-image-preview"><img id="product-image-preview-img" alt="معاينة صورة الصنف" /><span id="product-image-preview-empty">لا توجد صورة</span></div>
+        <label>حالة المنيو<select name="active"><option value="true">متاح</option><option value="false">مخفي</option></select></label>
+        <label>الوصف<input name="description" maxlength="240" /></label>
+        <div class="modal-actions"><button type="button" class="secondary-button" data-close="product-modal">إلغاء</button><button type="submit" class="primary-button">حفظ الصنف</button></div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="product-category-modal">
+      <section class="modal product-category-modal">
+        <div class="modal-head"><div><h2>إدارة فئات المنيو</h2><p>أضف الفئات أو عدّلها أو احذف الفئات غير المستخدمة</p></div><button type="button" class="modal-close" data-close="product-category-modal" aria-label="إغلاق">×</button></div>
+        <form id="product-category-form" class="product-category-form">
+          <input type="hidden" name="originalName" />
+          <label>اسم الفئة<input name="name" required maxlength="60" placeholder="مثال: مشروبات" /></label>
+          <div class="modal-actions"><button type="button" class="secondary-button hidden" id="product-category-cancel-edit">إلغاء التعديل</button><button type="submit" class="primary-button" id="product-category-submit">إضافة الفئة</button></div>
+        </form>
+        <div class="product-category-list" id="product-category-list"></div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="user-modal">
+      <form class="modal" id="user-form">
+        <div class="modal-head"><div><h2 id="user-modal-title">إضافة حساب جديد</h2><p>أنشئ بيانات دخول للمستخدم</p></div><button type="button" class="modal-close" data-close="user-modal" aria-label="إغلاق">×</button></div>
+        <input type="hidden" name="id" />
+        <label>اسم الدخول<input name="username" required minlength="3" maxlength="40" autocomplete="off" /></label>
+        <label>كلمة المرور <span class="optional" id="user-password-hint"></span><input name="password" type="password" required minlength="4" maxlength="200" pattern="[0-9]{4,}" inputmode="numeric" autocomplete="new-password" /></label>
+        <label>الصلاحية<select name="role"><option value="cashier">كاشير</option><option value="admin">مدير</option></select></label>
+        <fieldset class="page-permissions-field" id="user-page-permissions">
+          <legend>الصفحات المسموح بها للكاشير</legend>
+          <p>اختر الصفحات التي تظهر لهذا الحساب. صفحات المستخدمين والدليفري متاحة للمدير فقط.</p>
+          <div class="page-permissions-grid">
+            <label><input type="checkbox" name="pagePermissions" value="pos" /> نقطة البيع</label>
+            <label><input type="checkbox" name="pagePermissions" value="orders" /> الطلبات</label>
+            <label><input type="checkbox" name="pagePermissions" value="order-report" /> تقرير الطلبات</label>
+            <label><input type="checkbox" name="pagePermissions" value="reports" /> التقارير</label>
+            <label><input type="checkbox" name="pagePermissions" value="expenses" /> المصاريف</label>
+            <label><input type="checkbox" name="pagePermissions" value="menu" /> المنيو</label>
+            <label><input type="checkbox" name="pagePermissions" value="customers" /> العملاء</label>
+          </div>
+        </fieldset>
+        <label id="user-active-field" class="hidden">حالة الحساب<select name="active"><option value="true">نشط</option><option value="false">موقوف</option></select></label>
+        <div class="modal-actions"><button type="button" class="secondary-button" data-close="user-modal">إلغاء</button><button type="submit" class="primary-button" id="user-save-button">إنشاء الحساب</button></div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="driver-modal">
+      <form class="modal" id="driver-form">
+        <div class="modal-head"><div><h2 id="driver-modal-title">إضافة سائق توصيل</h2><p>الاسم ورقم الهاتف مطلوبان لتسجيل السائق</p></div><button type="button" class="modal-close" data-close="driver-modal" aria-label="إغلاق">×</button></div>
+        <input type="hidden" name="id" />
+        <label>اسم السائق<input name="name" required maxlength="100" autocomplete="name" /></label>
+        <label>رقم الهاتف<input name="phone" type="tel" inputmode="tel" required minlength="7" maxlength="20" autocomplete="tel" /></label>
+        <div class="modal-actions"><button type="button" class="delete-button driver-delete-button hidden" id="driver-delete-button">حذف السائق</button><button type="button" class="secondary-button" data-close="driver-modal">إلغاء</button><button type="submit" class="primary-button" id="driver-save-button">حفظ السائق</button></div>
+      </form>
+    </div>
+
+    <div class="modal-backdrop hidden" id="assign-driver-modal">
+      <section class="modal driver-assignment-modal" aria-labelledby="assign-driver-title">
+        <div class="modal-head"><div><h2 id="assign-driver-title">إسناد الطلب إلى سائق</h2><p id="assign-driver-order"></p></div><button type="button" class="modal-close" data-close="assign-driver-modal" aria-label="إغلاق">×</button></div>
+        <div class="driver-assignment-list" id="assign-driver-list"></div>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="contact-modal">
+      <section class="modal contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-describedby="contact-modal-message">
+        <div class="modal-head"><div><h2 id="contact-modal-title">تواصل معنا</h2></div></div>
+        <p id="contact-modal-message">في حال وجود أي عطل أو استفسارات، يُرجى التواصل مع م/ نور هيثم على واتساب على الرقم <bdi dir="ltr">01014868268</bdi>.</p>
+        <div class="modal-actions"><button type="button" class="primary-button" id="contact-modal-ok">Ok</button></div>
+      </section>
+    </div>
+    <div class="order-confirmation hidden" id="order-confirmation" role="status" aria-live="polite">
+      <span class="confirmation-check" aria-hidden="true">✓</span>
+      <strong>تم تأكيد الطلب رقم <span id="confirmed-order-number"></span></strong>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="/vendor/jspdf.umd.min.js"></script>
+    <script src="/vendor/html2canvas.min.js"></script>
+    <script src="app.js?v=18"></script>
+  </body>
+</html>
